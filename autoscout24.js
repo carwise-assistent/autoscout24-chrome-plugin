@@ -7,8 +7,13 @@ function loadSettings() {
     return settings || {}; // Ensure that settings is an object, even if it's null
 }
 
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return Object.fromEntries(params.entries());
+}
+
 window.addEventListener('load', function () {
-    let currentUrl = window.location.href;
+    let hash = window.location.href + getQueryParams();
 
     console.log('autoscout24.js loaded');
 
@@ -48,10 +53,24 @@ window.addEventListener('load', function () {
         // Call the calculation function
         const kilometersPerDay = calculateKilometersPerDay(mileage, firstRegistration);
 
+        function findSellerElement() {
+            const sellerSection = articleElement.querySelector('[data-testid="sellerinfo-section"]');
+            if (sellerSection !== null) {
+                return sellerSection;
+            }
+            const privateSeller = document.querySelectorAll('[class^="SellerInfo_private"]')
+            if (privateSeller.length > 0) {
+                return privateSeller[0];
+            }
+            return null;
+        }
 
-        const speedometerElement = articleElement.querySelector('[data-testid="sellerinfo-section"]');
+        const sellerSection = findSellerElement();
+        if (sellerSection === null) {
+            return;
+        }
 
-        const clonedElement = speedometerElement.cloneNode(true);
+        const clonedElement = sellerSection.cloneNode(true);
 
         clonedElement.innerHTML = `
             <svg width="18" height="18" color="currentColor" viewBox="0 0 24 24"><use xlink:href="/assets/as24-search-funnel/icons/icons-sprite-9b029e50.svg#speedometer"></use></svg>km per day: ${kilometersPerDay}
@@ -61,7 +80,7 @@ window.addEventListener('load', function () {
         }
 
         // Append the cloned element to the same container as the original speedometer
-        speedometerElement.parentElement.appendChild(clonedElement);
+        sellerSection.parentElement.appendChild(clonedElement);
 
     }
 
@@ -142,9 +161,9 @@ window.addEventListener('load', function () {
     addKilometersPerDay();
     // Monitor URL changes (works for SPAs where the URL changes without a reload)
     const checkForUrlChange = () => {
-        if (currentUrl !== window.location.href) {
-            currentUrl = window.location.href;
-            console.log('URL changed: ', currentUrl);
+        const currentHash = window.location.href + getQueryParams();
+        if (hash !== currentHash) {
+            hash = currentHash;
             addKilometersPerDay(); // Re-apply the plugin when URL changes
         }
     };
