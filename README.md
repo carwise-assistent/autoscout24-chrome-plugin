@@ -10,7 +10,15 @@ This Chrome extension calculates and displays the average kilometers driven per 
 - Allows users to set a threshold for kilometers per day and highlights listings that exceed this value via menu
 
 
-### Checksum:
-version: 1.0.0
-sha256: 4bf0bc5228cbb51281bacb15a6cbc3a25853ab8340d5d2aa04246169cdc56194
-md5: 967cae70fb3d05dc09b8d7757b6d05a9
+When looking at a car's mileage, it's important to consider that the average mileage for a passenger vehicle depends on the region, driving habits, and other factors. However, on average:
+
+The average mileage per year for a passenger car: is about 15,000 - 20,000 km.
+This gives around 40 - 55 km per day.
+Things to consider when evaluating mileage:
+
+40-50 km per day — this is a normal mileage for most passenger cars. Such a car was likely used for daily commutes to work and back.
+60 km per day or more may indicate that the car was used for long trips or was frequently on the road.
+Less than 40 km per day could mean the car was used sparingly, but it's also important to check its overall condition, as underuse can lead to certain components becoming stagnant.
+If the car was used regularly but was well-maintained, even slightly higher mileage could be acceptable. It's also important to ensure that the mileage matches the car's age.
+
+So ideally, 40-50 km per day is a reasonable benchmark for a used car's mileage.
