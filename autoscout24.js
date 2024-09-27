@@ -43,6 +43,12 @@ window.addEventListener('load', function () {
         return kilometersPerDay.toFixed(2); // Return rounded to 2 decimals
     }
 
+    function calculateKilometersPerYear(kilometersPerDay) {
+        const daysInYear = 365.25; // Account for leap years
+        const kilometersPerYear = kilometersPerDay * daysInYear;
+        return kilometersPerYear.toFixed(2);
+    }
+
     function handleAd(articleElement) {
         const settings = loadSettings();
         const kmPerDayThreshold = settings.kmPerDayThreshold || 0;
@@ -52,13 +58,14 @@ window.addEventListener('load', function () {
 
         // Call the calculation function
         const kilometersPerDay = calculateKilometersPerDay(mileage, firstRegistration);
+        const kilometersPerYear = calculateKilometersPerYear(kilometersPerDay);
 
         function findSellerElement() {
             const sellerSection = articleElement.querySelector('[data-testid="sellerinfo-section"]');
             if (sellerSection !== null) {
                 return sellerSection;
             }
-            const privateSeller = document.querySelectorAll('[class^="SellerInfo_private"]')
+            const privateSeller = document.querySelectorAll('[class^="SellerInfo_private"]');
             if (privateSeller.length > 0) {
                 return privateSeller[0];
             }
@@ -70,21 +77,49 @@ window.addEventListener('load', function () {
             return;
         }
 
-        const clonedElement = sellerSection.cloneNode(true);
+        // Create a new element to display the kilometers data
+        const kmElement = document.createElement('div');
+        kmElement.classList.add('km-info-container'); // Add a class for easy styling
 
-        clonedElement.innerHTML = `
-            <svg width="18" height="18" color="currentColor" viewBox="0 0 24 24"><use xlink:href="/assets/as24-search-funnel/icons/icons-sprite-9b029e50.svg#speedometer"></use></svg>km per day: ${kilometersPerDay}
-        `;
+        // Add content using modern, semantic HTML
+        kmElement.innerHTML = `
+        <div class="km-info">
+            <span class="km-label"><strong>Avg km per day:</strong></span> 
+            <span class="km-value">${kilometersPerDay}</span>
+        </div>
+        <div class="km-info">
+            <span class="km-label"><strong>Avg km per year:</strong></span> 
+            <span class="km-value">${kilometersPerYear}</span>
+        </div>
+    `;
+
+        // Apply additional styling based on threshold
         if (kilometersPerDay > kmPerDayThreshold) {
-            clonedElement.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Highlight in red
+            kmElement.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Highlight in red if above threshold
+            kmElement.style.border = '1px solid red'; // Add a border to make it more visible
+        } else {
+            kmElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)'; // Highlight in green if below threshold
+            kmElement.style.border = '1px solid green'; // Add a border to make it more visible
         }
 
-        // Append the cloned element to the same container as the original speedometer
-        sellerSection.parentElement.appendChild(clonedElement);
+        // General styling to make the kmElement look fancy
+        kmElement.style.display = 'block';
+        kmElement.style.padding = '10px';
+        kmElement.style.marginTop = '10px';
+        kmElement.style.borderRadius = '8px';
+        kmElement.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        kmElement.style.backgroundColor = '#f9f9f9'; // Light gray background for clarity
+        kmElement.style.fontFamily = 'Arial, sans-serif';
+        kmElement.style.fontSize = '14px';
 
+        // Optionally, add a tooltip for more information
+        kmElement.title = "Average kilometers based on the car's mileage and registration date.";
+
+        // Append the fancy kmElement to the seller section
+        sellerSection.parentElement.appendChild(kmElement);
     }
 
-    function addKilometersPerDay() {
+    function addKilometersMetrics() {
         const vehicleArticles = document.querySelectorAll('.list-page-item');
         vehicleArticles.forEach(article => {
             handleAd(article);
@@ -114,7 +149,6 @@ window.addEventListener('load', function () {
         modal.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
         modal.style.zIndex = '1000';
         modal.style.display = 'none'; // Hide by default
-
 
         // Input for km per day threshold
         const thresholdLabel = document.createElement('label');
@@ -158,16 +192,15 @@ window.addEventListener('load', function () {
     } else {
         console.error('Could not find the target div');
     }
-    addKilometersPerDay();
+    addKilometersMetrics();
     // Monitor URL changes (works for SPAs where the URL changes without a reload)
     const checkForUrlChange = () => {
         const currentHash = window.location.href + getQueryParams();
         if (hash !== currentHash) {
             hash = currentHash;
-            addKilometersPerDay(); // Re-apply the plugin when URL changes
+            addKilometersMetrics(); // Re-apply the plugin when URL changes
         }
     };
 
     setInterval(checkForUrlChange, 1000); // Poll for URL changes every second
-
 });

@@ -5,7 +5,7 @@ This Chrome extension calculates and displays the average kilometers driven per 
 ![img.png](img.png)
 
 ## Features
-- Automatically calculates the kilometers per day for each vehicle based on the mileage and first registration date.
+- Automatically calculates the kilometers per day and per year for each vehicle based on the mileage and first registration date.
 - Displays the result directly on the vehicle listing page.
 - Allows users to set a threshold for kilometers per day and highlights listings that exceed this value via menu
 
@@ -22,3 +22,4 @@ Less than 40 km per day could mean the car was used sparingly, but it's also imp
 If the car was used regularly but was well-maintained, even slightly higher mileage could be acceptable. It's also important to ensure that the mileage matches the car's age.
 
 So ideally, 40-50 km per day is a reasonable benchmark for a used car's mileage.
+
