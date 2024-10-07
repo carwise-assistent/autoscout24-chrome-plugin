@@ -51,38 +51,44 @@ window.addEventListener('load', function () {
 
     function handleAd(articleElement) {
         const settings = loadSettings();
-        const kmPerDayThreshold = settings.kmPerDayThreshold || 0;
-
-        const mileage = parseInt(articleElement.getAttribute('data-mileage'), 10);
-        const firstRegistration = articleElement.getAttribute('data-first-registration');
-
-        // Call the calculation function
-        const kilometersPerDay = calculateKilometersPerDay(mileage, firstRegistration);
-        const kilometersPerYear = calculateKilometersPerYear(kilometersPerDay);
 
         function findSellerElement() {
             const sellerSection = articleElement.querySelector('[data-testid="sellerinfo-section"]');
             if (sellerSection !== null) {
                 return sellerSection;
             }
-            const privateSeller = document.querySelectorAll('[class^="SellerInfo_private"]');
-            if (privateSeller.length > 0) {
-                return privateSeller[0];
+            const privateSeller = articleElement.querySelector('[class^="SellerInfo_private"]');
+            if (privateSeller != null) {
+                return privateSeller;
             }
             return null;
         }
 
-        const sellerSection = findSellerElement();
-        if (sellerSection === null) {
-            return;
+        function findButtonBar() {
+            const listItemHeader = articleElement.querySelector('[class^="ListItem_header"]');
+            console.log(listItemHeader);
+
+            return null;
         }
 
-        // Create a new element to display the kilometers data
-        const kmElement = document.createElement('div');
-        kmElement.classList.add('km-info-container'); // Add a class for easy styling
+        const sellerSection = findSellerElement();
+        // km per day threshold
+        if (sellerSection !== null) {
+            const kmPerDayThreshold = settings.kmPerDayThreshold || 0;
 
-        // Add content using modern, semantic HTML
-        kmElement.innerHTML = `
+            const mileage = parseInt(articleElement.getAttribute('data-mileage'), 10);
+            const firstRegistration = articleElement.getAttribute('data-first-registration');
+
+            // Call the calculation function
+            const kilometersPerDay = calculateKilometersPerDay(mileage, firstRegistration);
+            const kilometersPerYear = calculateKilometersPerYear(kilometersPerDay);
+
+            // Create a new element to display the kilometers data
+            const kmElement = document.createElement('div');
+            kmElement.classList.add('km-info-container'); // Add a class for easy styling
+
+            // Add content using modern, semantic HTML
+            kmElement.innerHTML = `
         <div class="km-info">
             <span class="km-label"><strong>Avg km per day:</strong></span> 
             <span class="km-value">${kilometersPerDay}</span>
@@ -93,30 +99,31 @@ window.addEventListener('load', function () {
         </div>
     `;
 
-        // Apply additional styling based on threshold
-        if (kilometersPerDay > kmPerDayThreshold) {
-            kmElement.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Highlight in red if above threshold
-            kmElement.style.border = '1px solid red'; // Add a border to make it more visible
-        } else {
-            kmElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)'; // Highlight in green if below threshold
-            kmElement.style.border = '1px solid green'; // Add a border to make it more visible
+            // Apply additional styling based on threshold
+            if (kilometersPerDay > kmPerDayThreshold) {
+                kmElement.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; // Highlight in red if above threshold
+                kmElement.style.border = '1px solid red'; // Add a border to make it more visible
+            } else {
+                kmElement.style.backgroundColor = 'rgba(0, 255, 0, 0.1)'; // Highlight in green if below threshold
+                kmElement.style.border = '1px solid green'; // Add a border to make it more visible
+            }
+
+            // General styling to make the kmElement look fancy
+            kmElement.style.display = 'block';
+            kmElement.style.padding = '10px';
+            kmElement.style.marginTop = '10px';
+            kmElement.style.borderRadius = '8px';
+            kmElement.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            kmElement.style.backgroundColor = '#f9f9f9'; // Light gray background for clarity
+            kmElement.style.fontFamily = 'Arial, sans-serif';
+            kmElement.style.fontSize = '14px';
+
+            // Optionally, add a tooltip for more information
+            kmElement.title = "Average kilometers based on the car's mileage and registration date.";
+
+            // Append the fancy kmElement to the seller section
+            sellerSection.parentElement.appendChild(kmElement);
         }
-
-        // General styling to make the kmElement look fancy
-        kmElement.style.display = 'block';
-        kmElement.style.padding = '10px';
-        kmElement.style.marginTop = '10px';
-        kmElement.style.borderRadius = '8px';
-        kmElement.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-        kmElement.style.backgroundColor = '#f9f9f9'; // Light gray background for clarity
-        kmElement.style.fontFamily = 'Arial, sans-serif';
-        kmElement.style.fontSize = '14px';
-
-        // Optionally, add a tooltip for more information
-        kmElement.title = "Average kilometers based on the car's mileage and registration date.";
-
-        // Append the fancy kmElement to the seller section
-        sellerSection.parentElement.appendChild(kmElement);
     }
 
     function addKilometersMetrics() {
